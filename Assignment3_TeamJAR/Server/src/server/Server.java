@@ -11,13 +11,31 @@ package server;
  */
 public class Server {
 
+    public int port;
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        
         // accepts a port from the command line
-
+        if (args.length < 1) {
+            System.err.println("Must give port");
+            System.exit(1);
+        }
+        try {
+            int port = Integer.parseInt(args[0]);
+            Server s = new Server(port);
+            s.run();
+        } catch (NumberFormatException e) {
+            System.err.println("Port must be an integer");
+        }
+    }
+    
+    public Server(int port) {
+        this.port = port;
+    }
+    
+    public void run() {
         // open TCP socket on port, listen for connection from client
         // when client connects, spawn new thread to handle it and do (new_client_thread)
 
