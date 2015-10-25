@@ -5,13 +5,20 @@
  */
 package server;
 
+import java.net.*;
+import java.io.*;
+
 /**
  *
  * @author joschutz
  */
 public class Server {
 
-    public int port;
+    private int port;
+    
+    private int nextDatagramPort;
+    
+    private ServerSocket incomingSocket;
     
     /**
      * @param args the command line arguments
@@ -36,12 +43,27 @@ public class Server {
     }
     
     public void run() {
+        try {
+            (new Thread(new HeartbeatServerThread(port, this))).start();
+            (new Thread(new ClientKillerThread(port, this))).start();
+            incomingSocket = new ServerSocket(port);
+            listenForConnections();
+        } catch (IOException e) {
+            System.err.println("Error: could not open socket");
+        }
+    }
+    
+    private void listenForConnections() throws IOException {
+        while (true) {
+            Socket connection = incomingSocket.accept();
+            
+        }
+    }
         // open TCP socket on port, listen for connection from client
         // when client connects, spawn new thread to handle it and do (new_client_thread)
 
 
         // (new_client_thread):
-        // spawn thread for heartbeat (heartbeat_thread)
         // add client to whatever list/map/structure is keeping track of clients
         // accept list of files from client
         // while client is not dropped:
@@ -53,16 +75,7 @@ public class Server {
         // close socket
 
 
-        // (heartbeat_thread):
-        // create new UDP socket for heartbeat
-        // establish connection with client
-        // while client is not dropped:
-                // check for message from client
-                // if there is a message:
-                        // reset time, loop
-                // if not check time, if greater than 200 seconds:
-                        // drop client
-        // close socket
+        
     }
     
 }
