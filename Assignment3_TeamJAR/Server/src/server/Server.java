@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package assignment3_teamjar;
+package server;
 
 /**
  *
  * @author joschutz
  */
-public class Assignment3_TeamJAR {
+public class Server {
 
     /**
      * @param args the command line arguments

@@ -31,3 +31,5 @@
 # Debug files
 *.dSYM/
 /Assignment3_TeamJAR/nbproject/private/
+/Assignment3_TeamJAR/Server/nbproject/private/
+/Assignment3_TeamJAR/Client_Peer/nbproject/private/
