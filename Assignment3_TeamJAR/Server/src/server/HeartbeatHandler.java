@@ -12,7 +12,7 @@ import java.net.*;
  *
  * @author dekarrin
  */
-public class HeartbeatServerThread implements Runnable {
+public class HeartbeatHandler implements Runnable {
     
     private int port;
     
@@ -20,13 +20,15 @@ public class HeartbeatServerThread implements Runnable {
     
     public static final int BUFFER_SIZE = 1024;
     
-    private Server server;
+    private volatile boolean running = true;
     
-    public HeartbeatServerThread(int port, Server server)
+    private ClientKiller killer;
+    
+    public HeartbeatHandler(int port, ClientKiller killer)
     {
         this.port = port;
         this.socket = socket;
-        this.server = server;
+        this.killer = killer;
     }
     
     @Override
@@ -39,9 +41,13 @@ public class HeartbeatServerThread implements Runnable {
             System.exit(1);
         }
         
-        while (true) {
+        while (running) {
             receiveHeartbeats();
         }
+    }
+    
+    public void halt() {
+        running = false;
     }
     
     private void receiveHeartbeats() {
@@ -60,7 +66,7 @@ public class HeartbeatServerThread implements Runnable {
 
         if (input.equals("HELLO")) {
             InetAddress ip = inPacket.getAddress();
-            server.refreshPeer(ip.getHostAddress());
+            killer.updateClientHeartbeat(ip.getHostAddress());
         }
     }
 }

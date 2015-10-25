@@ -7,6 +7,7 @@ package server;
 
 import java.net.*;
 import java.io.*;
+import java.util.*;
 
 /**
  *
@@ -19,6 +20,14 @@ public class Server {
     private int nextDatagramPort;
     
     private ServerSocket incomingSocket;
+    
+    private ClientKiller killer;
+    
+    private Map<String, ClientHandler> connections;
+    
+    private FileIndex index;
+    
+    public static final long CLIENT_TIMEOUT = 200 * 1000;
     
     /**
      * @param args the command line arguments
@@ -40,12 +49,15 @@ public class Server {
     
     public Server(int port) {
         this.port = port;
+        killer = new ClientKiller(this, CLIENT_TIMEOUT);
+        connections = Collections.synchronizedMap(new HashMap<String, ClientHandler>());
+        index = new FileIndex();
     }
     
     public void run() {
         try {
-            (new Thread(new HeartbeatServerThread(port, this))).start();
-            (new Thread(new ClientKillerThread(port, this))).start();
+            (new Thread(killer)).start();
+            (new Thread(new HeartbeatHandler(port, killer))).start();
             incomingSocket = new ServerSocket(port);
             listenForConnections();
         } catch (IOException e) {
@@ -53,29 +65,27 @@ public class Server {
         }
     }
     
+    public void drop(String clientIp) {
+        connections.get(clientIp).halt();
+        connections.remove(clientIp);
+        index.removeClient(clientIp);
+    }
+    
     private void listenForConnections() throws IOException {
         while (true) {
             Socket connection = incomingSocket.accept();
-            
+            String clientIp = connection.getInetAddress().getHostAddress();
+            ClientHandler handler = new ClientHandler(connection, port, index);
+            connections.put(clientIp, handler);
+            (new Thread(handler)).start();
         }
     }
         // open TCP socket on port, listen for connection from client
         // when client connects, spawn new thread to handle it and do (new_client_thread)
 
 
-        // (new_client_thread):
-        // add client to whatever list/map/structure is keeping track of clients
-        // accept list of files from client
-        // while client is not dropped:
-                // wait for input from client
-                // if input is search:
-                        // return a list of peers that have file
-                // elif input is update:
-                        // now peer has that file
-        // close socket
-
-
         
-    }
+
+
     
 }
