@@ -6,7 +6,7 @@ import java.io.*;
 
 public class Client_Peer {
 
-     static void main(String[] args) {
+     public static void main(String[] args) {
 	 
         // accept ip and port of server, shared_directory from command line
 	 if (args.length < 3){
@@ -23,6 +23,8 @@ public class Client_Peer {
 	     System.err.println(e);
 	 }
      }
+     
+     private Client_Heartbeat_Thread cht;
      
      private String serverIP;
      private int serverPort;
@@ -48,14 +50,18 @@ public class Client_Peer {
 	 } 
 	 
 	 // create empty map for downloaded files
-	 Map<String, Boolean> downloadedFiles = new HashMap<>();
+	 Map<String, Boolean> downloadedFiles = new HashMap<String, Boolean>();
 	 
 	 BufferedReader in = null;
 	 int heartPort = -1;
 	 
 	 try{
 	     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-	     heartPort = Integer.parseInt(in.readLine());
+	     while (!in.ready()){
+		 Thread.sleep(10);
+	     }
+	     String tempStr = in.readLine();
+	     heartPort = Integer.parseInt(tempStr);
 	 }catch (Exception e){
 	     e.printStackTrace();
 	     System.exit(1);
@@ -63,7 +69,8 @@ public class Client_Peer {
 	 
 	 // spawn (client_heartbeat_thread)
 	 try{
-	    new Client_Heartbeat_Thread(InetAddress.getByName(serverIP), heartPort).start();
+	    cht = new Client_Heartbeat_Thread(InetAddress.getByName(serverIP), heartPort);
+	    cht.start();
 	 }catch (Exception e){
 	     e.printStackTrace();
 	     System.exit(1);
@@ -78,14 +85,16 @@ public class Client_Peer {
 	     File directory = new File(folderPath);
 	     File[] fList = directory.listFiles();
 	 
-	     DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+	     OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream());
 	 
 	     // send list of files
-	     out.write(fList.length);
-	     out.writeBytes("\n");
+	     out.write(fList.length + "");
+	     out.write("\n");
+	     out.flush();
 	     for(int i = 0; i<fList.length; i++){
-	         out.writeBytes(fList[i].getName());
-		 out.writeBytes("\n");
+	         out.write(fList[i].getName());
+		 out.write("\n");
+		 out.flush();
 	     }
 	 
 	 
@@ -99,15 +108,17 @@ public class Client_Peer {
 		 if(userInput.equalsIgnoreCase("download")){
 		     System.out.println("What is the name of the file you are searching for?");
 		     String searchFile = scan.nextLine();
-		     out.writeBytes("Search\n");
-		     out.writeBytes(searchFile);
-		     out.writeBytes("\n");
+		     out.write("Search\n");
+		     out.flush();
+		     out.write(searchFile);
+		     out.write("\n");
+		     out.flush();
 		     while(!in.ready()){
 			 Thread.sleep(10);
 		     }
 		     String ips = in.readLine();
 		     if(ips.equals("")){
-			 System.out.println("The file you are searching for doesn't exist.");
+			 System.out.println("These are not the droids you are looking for.");
 		     }else{
 			String[] ipList = ips.split(",");
 			System.out.println("Select the number of the IP you wish to download from.");
@@ -117,7 +128,7 @@ public class Client_Peer {
 			userInput = scan.nextLine();
 			try{
 			    int userInt = Integer.parseInt(userInput);
-			    new Download_Thread(InetAddress.getByName(ipList[userInt]), peerPort, searchFile).start();
+			    //new Download_Thread(InetAddress.getByName(ipList[userInt]), peerPort, searchFile).start();
 			}catch(Exception e){
 			    e.printStackTrace();
 			}
@@ -129,6 +140,8 @@ public class Client_Peer {
 		 }
 		 
 	    }
+	     
+	     cht.halt();
 	     
 	     in.close();
 	     out.close();
@@ -176,7 +189,5 @@ public class Client_Peer {
             // tell server to update file list
             // set file to true in downloaded files
 
-
-    }
     
 }

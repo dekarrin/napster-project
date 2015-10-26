@@ -7,6 +7,8 @@ import java.io.*;
 
 public class Client_Heartbeat_Thread extends Thread{
     
+    private volatile boolean running = true;
+    
     private InetAddress serverIP;
     private int heartPort;
     
@@ -18,7 +20,7 @@ public class Client_Heartbeat_Thread extends Thread{
     public void run(){
 	
 	DatagramSocket socket = null;
-        byte[] message = {'H','E','L','L','0'};
+        byte[] message = {'H','E','L','L','O'};
 	
 	// connect to UDP server
 	try{
@@ -30,8 +32,9 @@ public class Client_Heartbeat_Thread extends Thread{
 	
 	DatagramPacket sendPacket = new DatagramPacket(message,message.length,serverIP,heartPort);
 	
+	
 	// while connected:
-	while (socket.isConnected()){
+	while (running){
 	    try{
 		// send heartbeat
 		socket.send(sendPacket);
@@ -45,6 +48,10 @@ public class Client_Heartbeat_Thread extends Thread{
 	
 	// close heartbeat connection
 	socket.close();
+    }
+    
+    public void halt(){
+	running = false;
     }
     
 }
