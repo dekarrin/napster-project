@@ -21,8 +21,13 @@ public class PeerHandler extends Thread {
     
     public void run(){
 	try {
+	    //input stream
+	    //output stream
             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            BufferedWriter output = createSocketWriter();
+	    
+	    DataOutputStream dOutStream = new DataOutputStream(socket.getOutputStream());
+	    
+	    //OutputStream outStream = socket.getOutputStream();
 	    
             // accept file being searched for from peer
             waitForInput(input);
@@ -31,19 +36,21 @@ public class PeerHandler extends Thread {
 	    //this should make the path to the file
 	    File dirLocation = new File(shareLocation, fileName);
 	    
-	    output.write(dirLocation.length()+"\n");
-	    output.flush();
+	    FileInputStream fileInStream = new FileInputStream(dirLocation);
 	    
-	    //read in the file the is do be downloaded
-	    BufferedReader fileBufRead = new BufferedReader(new FileReader(dirLocation));
+	    dOutStream.writeLong(dirLocation.length());
+	    dOutStream.flush();
 	    
-	    while (fileBufRead.ready()){
-		//send out file one line at a time
-		output.write(fileBufRead.readLine()+"\n");
-		output.flush();
+	    byte[] byteArray = new byte[64];
+	    
+	    int endOfFile = fileInStream.read(byteArray);
+	    
+	    while (endOfFile != -1){
+		dOutStream.write(byteArray);
+		dOutStream.flush();
+		endOfFile = fileInStream.read(byteArray);
 	    }
 	    
-	    fileBufRead.close();
 	    socket.close();
 	    
 	} catch (IOException e) {
@@ -51,6 +58,7 @@ public class PeerHandler extends Thread {
         }
     }
     
+    //wait fo input so we don't close reader prematurely
     private void waitForInput(BufferedReader input) {
         try {
             while (!input.ready()) {

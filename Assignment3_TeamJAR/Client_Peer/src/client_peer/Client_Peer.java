@@ -172,19 +172,6 @@ public class Client_Peer {
 	     System.exit(1);
 	 }
 	
-        // while connected:
-                // get user input
-                // if user input is download:
-                        // prompt for file to download
-                        // send search to server
-                        // if search contains peers:
-                                // prompt for peer
-                                // spawn thread (download_from_peer)
-                // if user input is status:
-                        // display whether that file is downloaded
-                // if user input is exit:
-                        // connected is false
-        // close server connection
      }
      
      public void checkConnection(){
@@ -205,21 +192,5 @@ public class Client_Peer {
 	 }
 	 
      }
-
-            // (peer_server)
-            // create TCP socket
-            // while true:
-                    // accept connection
-                    // spawn (upload_to_peer)
-                    // close connection
-
-
-            // (upload_to_peer)
-            // open file
-            // transmit file
-
-
-           
-
-    
+     
 }

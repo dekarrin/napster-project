@@ -33,9 +33,11 @@ public class PeerServer extends Thread {
     
     private void listenForConnections() throws IOException {
         while (running) {
+	    //new connection occurs and is accepted
             Socket connection = incomingSocket.accept();
             System.out.println("Accepted connection");
             String clientIp = connection.getInetAddress().getHostAddress();
+	    //pass the connencton to the PeerHandeler and run it as a new thread
             PeerHandler handler = new PeerHandler(connection, listenPort, shareLocation);
             (new Thread(handler)).start();
         }
