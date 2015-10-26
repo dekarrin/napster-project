@@ -80,7 +80,7 @@ public class Client_Peer {
 	     System.exit(1);
 	 }	 
 	 
-        ps = new PeerServer(peerPort);
+        ps = new PeerServer(peerPort,folderPath);
 	ps.start();
         
 	 
@@ -144,8 +144,9 @@ public class Client_Peer {
 			
 			pd = new PeerDownloader(ipList[userInt],peerPort,folderPath,searchFile,downloadedFiles);
 		     }
+		     
 		 }else if (userInput.equalsIgnoreCase("status")){
-		     //something
+		     
 		 }else if (userInput.equalsIgnoreCase("exit")){
 		     break;
 		 }

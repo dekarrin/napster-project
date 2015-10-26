@@ -11,11 +11,11 @@ public class PeerServer extends Thread {
     
     private ServerSocket incomingSocket;
     
-    //private Map<String, PeerHandler> connections;
+    private String shareLocation;
     
-    public PeerServer(int port){
+    public PeerServer(int port, String folderPath){
 	listenPort = port;
-	//connections = Collections.synchronizedMap(new HashMap<String, PeerHandler>());
+	shareLocation = folderPath;
     }
     
     public void run(){
@@ -36,8 +36,7 @@ public class PeerServer extends Thread {
             Socket connection = incomingSocket.accept();
             System.out.println("Accepted connection");
             String clientIp = connection.getInetAddress().getHostAddress();
-            PeerHandler handler = new PeerHandler(connection, listenPort);
-            //connections.put(clientIp, handler);
+            PeerHandler handler = new PeerHandler(connection, listenPort, shareLocation);
             (new Thread(handler)).start();
         }
     }
