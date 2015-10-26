@@ -25,6 +25,12 @@ public class Client_Peer {
      }
      
      private Client_Heartbeat_Thread cht;
+     private PeerServer ps;
+     private PeerDownloader pd;
+     
+     Socket socket = null;
+     
+     Scanner scan = new Scanner(System.in);
      
      private String serverIP;
      private int serverPort;
@@ -38,8 +44,6 @@ public class Client_Peer {
      }
 	 
      public void run() {
-	 
-	 Socket socket = null;
 	 
 	 // connect to server at server-ip on server-port
 	 try{
@@ -76,9 +80,8 @@ public class Client_Peer {
 	     System.exit(1);
 	 }	 
 	 
-        
-        
-        // spawn (peer_server)
+        ps = new PeerServer(peerPort);
+	ps.start();
         
 	 
 	 try{
@@ -101,37 +104,45 @@ public class Client_Peer {
 	     while(socket.isConnected()){
 		 
 		 System.out.println("Download, Status, Exit");
-		 Scanner scan = new Scanner(System.in);
 		 
 		 String userInput = scan.nextLine();
+		 
+		 this.checkConnection();
 		 
 		 if(userInput.equalsIgnoreCase("download")){
 		     System.out.println("What is the name of the file you are searching for?");
 		     String searchFile = scan.nextLine();
+		     this.checkConnection();
 		     out.write("Search\n");
 		     out.flush();
+		     this.checkConnection();
 		     out.write(searchFile);
 		     out.write("\n");
 		     out.flush();
 		     while(!in.ready()){
 			 Thread.sleep(10);
+			 this.checkConnection();
 		     }
 		     String ips = in.readLine();
 		     if(ips.equals("")){
 			 System.out.println("These are not the droids you are looking for.");
 		     }else{
 			String[] ipList = ips.split(",");
+			this.checkConnection();
 			System.out.println("Select the number of the IP you wish to download from.");
 			for(int i = 0; i<ipList.length; i++){
 			    System.out.println(i + " => " + ipList[i]);
 			}
 			userInput = scan.nextLine();
+			this.checkConnection();
+			int userInt = -1;
 			try{
-			    int userInt = Integer.parseInt(userInput);
-			    //new Download_Thread(InetAddress.getByName(ipList[userInt]), peerPort, searchFile).start();
+			    userInt = Integer.parseInt(userInput);
 			}catch(Exception e){
-			    e.printStackTrace();
+			    System.out.println("Please only type the number next to the IP address you wish to download from.");
 			}
+			
+			pd = new PeerDownloader(ipList[userInt],peerPort,folderPath,searchFile,downloadedFiles);
 		     }
 		 }else if (userInput.equalsIgnoreCase("status")){
 		     //something
@@ -142,6 +153,8 @@ public class Client_Peer {
 	    }
 	     
 	     cht.halt();
+	     pd.halt();
+	     ps.end();
 	     
 	     in.close();
 	     out.close();
@@ -166,6 +179,16 @@ public class Client_Peer {
                 // if user input is exit:
                         // connected is false
         // close server connection
+     }
+     
+     public void checkConnection(){
+	 if (!socket.isConnected()){
+	     System.out.println("Connection to server lost. Closing program.");
+	     cht.halt();
+	     pd.halt();
+	     ps.end();
+	     System.exit(1);
+	 }
      }
 
             // (peer_server)
