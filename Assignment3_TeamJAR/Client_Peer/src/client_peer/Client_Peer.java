@@ -146,7 +146,12 @@ public class Client_Peer {
 		     }
 		     
 		 }else if (userInput.equalsIgnoreCase("status")){
-		     
+		     Map<String, Boolean> downloadStatus = pd.getDownloadedFiles();
+		     System.out.println("File_Name\n\tStatus\n");
+		     for(Map.Entry<String, Boolean> entry : downloadStatus.entrySet()){
+			 System.out.println(entry.getKey());
+			 System.out.println("\t" + boolToStatus(entry.getValue()) + "\n");
+		     }
 		 }else if (userInput.equalsIgnoreCase("exit")){
 		     break;
 		 }
@@ -190,6 +195,15 @@ public class Client_Peer {
 	     ps.end();
 	     System.exit(1);
 	 }
+     }
+     
+     private String boolToStatus(Boolean status){
+	 if(status){
+	     return "Complete";
+	 }else{
+	     return "Downloading";
+	 }
+	 
      }
 
             // (peer_server)
