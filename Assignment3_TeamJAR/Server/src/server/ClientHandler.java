@@ -23,7 +23,7 @@ public class ClientHandler implements Runnable {
     
     private String clientIp;
     
-    private volatile boolean running = false;
+    private volatile boolean running = true;
     
     public ClientHandler(Socket socket, int udpPort, FileIndex index)
     {
@@ -39,15 +39,17 @@ public class ClientHandler implements Runnable {
         index.addClient(clientIp);
         try {
             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            DataOutputStream output = new DataOutputStream(socket.getOutputStream());
-            output.writeInt(udpPort);
-            output.writeUTF("\n");
+            OutputStreamWriter output = new OutputStreamWriter(socket.getOutputStream());
+            output.write(udpPort + "\n");
+            output.flush();
             // accept list of files from client
             waitForInput(input);
             int numFiles = Integer.parseInt(input.readLine());
             for (int i = 0; i < numFiles; i++) {
                 waitForInput(input);
-                index.addFileToClient(input.readLine(), clientIp);
+                String file = input.readLine();
+                index.addFileToClient(file, clientIp);
+                System.out.println("New client has file " + file);
             }
             while (running) {
                 if (input.ready()) {
@@ -75,26 +77,27 @@ public class ClientHandler implements Runnable {
         running = false;
     }
     
-    private void processClientCommand(BufferedReader input, DataOutputStream output) throws IOException
+    private void processClientCommand(BufferedReader input, OutputStreamWriter output) throws IOException
     {
         String command = input.readLine();
+        System.out.println("Recieved command " + command + " from client");
         switch (command) {
             case "Search":
                 waitForInput(input);
                 String filename = input.readLine();
                 Collection<String> clients = index.getClientsForFile(filename);
-                if (clients.size() > 0) {
+                if (clients != null && clients.size() > 0) {
                     StringBuilder builder = new StringBuilder();
                     for (String c : clients) {
                         builder.append(c);
                         builder.append(",");
                     }
                     builder.deleteCharAt(builder.length() - 1);
-                    output.writeUTF(builder.toString() + "\n");
+                    output.write(builder.toString() + "\n");
                 } else {
-                    // write empty string
-                    output.writeUTF("\n");
+                    output.write("\n");
                 }
+                output.flush();
                 break;
 
             case "Update":
@@ -112,6 +115,7 @@ public class ClientHandler implements Runnable {
                 Thread.sleep(10);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return;
         }
     }

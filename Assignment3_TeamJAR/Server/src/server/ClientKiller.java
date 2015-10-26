@@ -33,6 +33,7 @@ public class ClientKiller implements Runnable {
                 long time = System.currentTimeMillis();
                 for (String client : heartbeatTimes.keySet()) {
                     if (time - heartbeatTimes.get(client) > timeout) {
+                        System.out.println("No heartbeat from client " + client + "; connection timed out");
                         server.drop(client);
                     }
                 }
@@ -43,11 +44,19 @@ public class ClientKiller implements Runnable {
         }
     }
     
+    public void removeClient(String client) {
+        heartbeatTimes.remove(client);
+    }
+    
     public void updateClientHeartbeat(String client) {
         heartbeatTimes.put(client, System.currentTimeMillis());
     }
     
     public void halt() {
         running = false;
+    }
+
+    boolean hasClient(String hostAddress) {
+        return heartbeatTimes.containsKey(hostAddress);
     }
 }

@@ -66,12 +66,15 @@ public class Server {
         connections.get(clientIp).halt();
         connections.remove(clientIp);
         index.removeClient(clientIp);
+        killer.removeClient(clientIp);
     }
     
     private void listenForConnections() throws IOException {
         while (true) {
             Socket connection = incomingSocket.accept();
+            System.out.println("Accepted connection");
             String clientIp = connection.getInetAddress().getHostAddress();
+            killer.updateClientHeartbeat(clientIp);
             ClientHandler handler = new ClientHandler(connection, port, index);
             connections.put(clientIp, handler);
             (new Thread(handler)).start();

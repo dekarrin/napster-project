@@ -33,6 +33,7 @@ public class HeartbeatHandler implements Runnable {
     
     @Override
     public void run() {
+        System.out.println("ready to get heartbeats");
         try {
             socket = new DatagramSocket(port);
         } catch (SocketException e) {
@@ -44,6 +45,8 @@ public class HeartbeatHandler implements Runnable {
         while (running) {
             receiveHeartbeats();
         }
+        
+        System.out.println("heartbeats thread closed");
     }
     
     public void halt() {
@@ -51,6 +54,7 @@ public class HeartbeatHandler implements Runnable {
     }
     
     private void receiveHeartbeats() {
+        System.out.println("Getting Heartbeats...");
         byte[] inBuffer = new byte[BUFFER_SIZE];
         DatagramPacket inPacket = new DatagramPacket(inBuffer, inBuffer.length);
 
@@ -62,11 +66,14 @@ public class HeartbeatHandler implements Runnable {
             System.exit(1);
         }
 
-        String input = new String(inPacket.getData());
+        byte[] input = inPacket.getData();
 
-        if (input.equals("HELLO")) {
+        if (input[0] == 'H' && input[1] == 'E' && input[2] == 'L' && input[3] == 'L' && input[4] == 'O') {
             InetAddress ip = inPacket.getAddress();
-            killer.updateClientHeartbeat(ip.getHostAddress());
+            System.out.println("Received heartbeat from " + ip.getHostAddress());
+            if (killer.hasClient(ip.getHostAddress())) {
+                killer.updateClientHeartbeat(ip.getHostAddress());
+            }
         }
     }
 }
