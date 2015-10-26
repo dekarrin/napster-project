@@ -54,7 +54,7 @@ public class Client_Peer {
 	 } 
 	 
 	 // create empty map for downloaded files
-	 Map<String, Boolean> downloadedFiles = new HashMap<String, Boolean>();
+	 Map<String, Boolean> downloadedFiles = Collections.synchronizedMap(new HashMap<String, Boolean>());
 	 
 	 BufferedReader in = null;
 	 int heartPort = -1;
@@ -204,13 +204,7 @@ public class Client_Peer {
             // transmit file
 
 
-            // (download_from_peer)
-            // add file to downloaded files map, set to false
-            // open tcp connection to peer
-            // download file
-            // close tcp connection to peer
-            // tell server to update file list
-            // set file to true in downloaded files
+           
 
     
 }
