@@ -70,20 +70,23 @@ public class PeerDownloader extends Thread {
     private long getFileSize(InputStream socketIn, BufferedWriter socketOut) throws IOException {
 	socketOut.write(filename + "\n");
 	socketOut.flush();
-	waitForInput(socketIn);
-	long size = Long.parseLong(socketIn.readLine());
-	return size;
+	DataInputStream dataIn = new DataInputStream(socketIn);
+	long fileSize = dataIn.readLong();
+	return fileSize;
     }
     
-    private void downloadFileData(BufferedReader socketIn, BufferedWriter socketOut, long fileSize) throws IOException {
+    private void downloadFileData(InputStream socketIn, BufferedWriter socketOut, long fileSize) throws IOException {
 	File dir = new File(sharedDir);
 	File downloadFile = new File(dir, filename);
-	BufferedWriter fileOut = new BufferedWriter(new FileWriter(downloadFile));
-	long readBytes = 0L;
-	
-	while (readBytes < fileSize) {
-	    socketIn.read 
+	FileOutputStream fileOut = new FileOutputStream(downloadFile);
+	long totalReadBytes = 0L;
+	byte[] buffer = new byte[BUFFER_SIZE];
+	while (totalReadBytes < fileSize) {
+	    int readBytes = socketIn.read(buffer);
+	    fileOut.write(buffer, 0, readBytes);
+	    totalReadBytes += readBytes;
 	}
+	fileOut.flush();
     }
     
     private void createSocket() {
@@ -120,12 +123,12 @@ public class PeerDownloader extends Thread {
 	return in;
     }
     
-    private void waitForInput(BufferedReader input) {
+    private void waitForInput(InputStream input) throws IOException {
         try {
-            while (!input.ready()) {
+            while (input.available() > 0) {
                 Thread.sleep(10);
             }
-        } catch (Exception e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
             return;
         }
