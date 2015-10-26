@@ -70,27 +70,8 @@ public class PeerDownloader extends Thread {
     private long getFileSize(InputStream socketIn, BufferedWriter socketOut) throws IOException {
 	socketOut.write(filename + "\n");
 	socketOut.flush();
-	waitForInput(socketIn);
-	byte[] readingChar = new byte[1];
-	byte[] digits = new byte[32];
-	int digitNum = 0;
-	while (true) {
-	    int readBytes = socketIn.read(readingChar);
-	    if (readBytes != 1) {
-		break;
-	    } else {
-		if (readingChar[0] == '\0') {
-		    break;
-		} else {
-		    digits[digitNum++] = readingChar[0];
-		}
-	    }
-	}
-	long fileSize = 0;
-	int pow10 = 0;
-	for (int i = digitNum - 1; i >= 0; i--) {
-	    fileSize += digits[i] * Math.pow(10, pow10);
-	}
+	DataInputStream dataIn = new DataInputStream(socketIn);
+	long fileSize = dataIn.readLong();
 	return fileSize;
     }
     
