@@ -155,30 +155,28 @@ public class Client_Peer {
         // close server connection
      }
 
-
-        // (peer_server)
-        // create TCP socket
-        // while true:
-                // accept connection
-                // spawn (upload_to_peer)
-                // close connection
-
-
-        // (upload_to_peer)
-        // open file
-        // transmit file
+            // (peer_server)
+            // create TCP socket
+            // while true:
+                    // accept connection
+                    // spawn (upload_to_peer)
+                    // close connection
 
 
-        // (download_from_peer)
-        // add file to downloaded files map, set to false
-        // open tcp connection to peer
-        // download file
-        // close tcp connection to peer
-        // tell server to update file list
-        // set file to true in downloaded files
+            // (upload_to_peer)
+            // open file
+            // transmit file
 
 
-        
-    
+            // (download_from_peer)
+            // add file to downloaded files map, set to false
+            // open tcp connection to peer
+            // download file
+            // close tcp connection to peer
+            // tell server to update file list
+            // set file to true in downloaded files
+
+
+    }
     
 }
