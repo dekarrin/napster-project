@@ -96,7 +96,9 @@ public class ClientHandler implements Runnable {
 			builder.append(",");
 		    }
 		}
-		builder.deleteCharAt(builder.length() - 1);
+		if (builder.length() > 0) {
+		    builder.deleteCharAt(builder.length() - 1);
+		}
 		output.write(builder.toString() + "\n");
 	    } else {
 		output.write("\n");
