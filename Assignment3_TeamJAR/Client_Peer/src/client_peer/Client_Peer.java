@@ -133,16 +133,28 @@ public class Client_Peer {
 			for(int i = 0; i<ipList.length; i++){
 			    System.out.println(i + " => " + ipList[i]);
 			}
-			userInput = scan.nextLine();
-			this.checkConnection();
+			boolean validInput = false;
 			int userInt = -1;
-			try{
-			    userInt = Integer.parseInt(userInput);
-			}catch(Exception e){
-			    System.out.println("Please only type the number next to the IP address you wish to download from.");
+			while (!validInput){
+			    userInput = scan.nextLine();
+			    this.checkConnection();
+			    
+			    try{
+				userInt = Integer.parseInt(userInput);
+				if (userInt >= -1 && userInt < ipList.length){
+				    validInput = true;
+				}else{
+				    System.out.println("Please only type the number next to the IP address you wish to download from or -1 to exit.");
+				}
+			    }catch(Exception e){
+				System.out.println("Please only type the number next to the IP address you wish to download from or -1 to exit.");
+			    }
 			}
 			
-			pd = new PeerDownloader(ipList[userInt],peerPort,folderPath,searchFile,downloadedFiles);
+			if(userInt != -1){
+			    pd = new PeerDownloader(ipList[userInt],peerPort,folderPath,searchFile,downloadedFiles);
+			}
+			
 		     }
 		     
 		 }else if (userInput.equalsIgnoreCase("status")){
@@ -153,7 +165,7 @@ public class Client_Peer {
 			 System.out.println("\t" + boolToStatus(entry.getValue()) + "\n");
 		     }
 		 }else if (userInput.equalsIgnoreCase("exit")){
-		     break;
+		     System.exit(1);
 		 }
 		 
 	    }
