@@ -20,7 +20,7 @@ public class Client_Peer {
 	     Client_Peer clpr = new Client_Peer(serverIP, serverPort, filePath);
 	     clpr.run();	
 	 } catch (Exception e){
-	     System.err.println(e);
+	     e.printStackTrace();
 	 }
      }
      
@@ -46,6 +46,12 @@ public class Client_Peer {
 	 serverPort = port;
 	 folderPath = path;
 	 downloadedFiles = Collections.synchronizedMap(new HashMap<String, Boolean>());
+	 try{
+	    socket = new Socket(InetAddress.getByName(serverIP), serverPort);
+	 }catch(Exception e){
+	     e.printStackTrace();
+	     System.exit(1);
+	 } 
 	 try {
 		serverOut = new OutputStreamWriter(socket.getOutputStream());
 		serverIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -57,12 +63,7 @@ public class Client_Peer {
      public void run() {
 	 
 	 // connect to server at server-ip on server-port
-	 try{
-	    socket = new Socket(InetAddress.getByName(serverIP), serverPort);
-	 }catch(Exception e){
-	     e.printStackTrace();
-	     System.exit(1);
-	 } 
+	 
 	 
 	 // create empty map for downloaded files
 	  
