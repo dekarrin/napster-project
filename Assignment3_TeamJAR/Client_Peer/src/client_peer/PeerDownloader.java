@@ -138,8 +138,4 @@ public class PeerDownloader extends Thread {
             return;
         }
     }
-    
-    public Map<String, Boolean> getDownloadedFiles(){
-	return downloadedFiles;
-    }
 }
