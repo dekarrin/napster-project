@@ -88,11 +88,13 @@ public class ClientHandler implements Runnable {
 	    if (clients != null && clients.size() > 0) {
 		StringBuilder builder = new StringBuilder();
 		for (String c : clients) {
-		    if (c.equals("127.0.0.1")) {
-			c = InetAddress.getLocalHost().getHostAddress();
+		    if (!c.equals(clientIp)) {
+			if (c.equals("127.0.0.1")) {
+			    c = InetAddress.getLocalHost().getHostAddress();
+			}
+			builder.append(c);
+			builder.append(",");
 		    }
-		    builder.append(c);
-		    builder.append(",");
 		}
 		builder.deleteCharAt(builder.length() - 1);
 		output.write(builder.toString() + "\n");
