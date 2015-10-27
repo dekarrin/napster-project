@@ -121,9 +121,8 @@ public class Client_Peer {
 		     downloadFromServer();
 		     
 		 }else if (userInput.equalsIgnoreCase("status")){
-		     Map<String, Boolean> downloadStatus = pd.getDownloadedFiles();
 		     System.out.println("File_Name\n\tStatus\n");
-		     for(Map.Entry<String, Boolean> entry : downloadStatus.entrySet()){
+		     for(Map.Entry<String, Boolean> entry : downloadedFiles.entrySet()){
 			 System.out.println(entry.getKey());
 			 System.out.println("\t" + boolToStatus(entry.getValue()) + "\n");
 		     }
