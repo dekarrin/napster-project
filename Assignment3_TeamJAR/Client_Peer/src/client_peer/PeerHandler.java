@@ -3,7 +3,14 @@ package client_peer;
 import java.net.*;
 import java.io.*;
 import java.util.*;
-
+/**
+ * Assignment #3
+ * 10/26/15
+ * 
+ * @author Rebecca Nelson
+ * @author Adam Boole
+ * @author John Schutz
+ */
 public class PeerHandler extends Thread {
     
     private Socket socket;

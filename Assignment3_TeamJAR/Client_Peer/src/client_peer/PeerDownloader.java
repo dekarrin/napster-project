@@ -10,8 +10,12 @@ import java.util.*;
 import java.net.*;
 
 /**
- *
- * @author dekarrin
+ * Assignment #3
+ * 10/26/15
+ * 
+ * @author Rebecca Nelson
+ * @author Adam Boole
+ * @author John Schutz
  */
 public class PeerDownloader extends Thread {
     
