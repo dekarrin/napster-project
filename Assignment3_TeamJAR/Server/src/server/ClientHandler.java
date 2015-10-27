@@ -81,31 +81,26 @@ public class ClientHandler implements Runnable {
     {
         String command = input.readLine();
         System.out.println("Recieved command " + command + " from client");
-        switch (command) {
-            case "Search":
-                waitForInput(input);
-                String filename = input.readLine();
-                Collection<String> clients = index.getClientsForFile(filename);
-                if (clients != null && clients.size() > 0) {
-                    StringBuilder builder = new StringBuilder();
-                    for (String c : clients) {
-                        builder.append(c);
-                        builder.append(",");
-                    }
-                    builder.deleteCharAt(builder.length() - 1);
-                    output.write(builder.toString() + "\n");
-                } else {
-                    output.write("\n");
-                }
-                output.flush();
-                break;
-
-            case "Update":
-                waitForInput(input);
-                String updatedFilename = input.readLine();
-                index.addFileToClient(updatedFilename, clientIp);
-                break;
-
+        if (command.equals("Search")) {
+	    waitForInput(input);
+	    String filename = input.readLine();
+	    Collection<String> clients = index.getClientsForFile(filename);
+	    if (clients != null && clients.size() > 0) {
+		StringBuilder builder = new StringBuilder();
+		for (String c : clients) {
+		    builder.append(c);
+		    builder.append(",");
+		}
+		builder.deleteCharAt(builder.length() - 1);
+		output.write(builder.toString() + "\n");
+	    } else {
+		output.write("\n");
+	    }
+	    output.flush();
+	} else if (command.equals("Update")) {
+	    waitForInput(input);
+	    String updatedFilename = input.readLine();
+	    index.addFileToClient(updatedFilename, clientIp);
         }
     }
     
