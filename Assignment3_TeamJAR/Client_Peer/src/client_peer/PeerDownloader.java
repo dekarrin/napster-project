@@ -31,12 +31,15 @@ public class PeerDownloader extends Thread {
     
     private volatile boolean running = true;
     
-    public PeerDownloader(String peerIp, int peerPort, String sharedDir, String filename, Map<String, Boolean> downloadedFiles) {
+    private Client_Peer parent;
+    
+    public PeerDownloader(String peerIp, int peerPort, String sharedDir, String filename, Map<String, Boolean> downloadedFiles, Client_Peer parent) {
         port = peerPort;
         ip = peerIp;
         this.downloadedFiles = downloadedFiles;
         this.filename = filename;
 	this.sharedDir = sharedDir;
+	this.parent = parent;
     }
     
     @Override
@@ -51,6 +54,7 @@ public class PeerDownloader extends Thread {
 	    if (numBytes > 0) {
 		downloadFileData(input, output, numBytes);
 		downloadedFiles.put(filename, true);
+		parent.updateServer(filename);
 	    }
 	} catch (IOException e) {
 	    System.err.println("Error while downloading '" + filename + "' from " + ip + ":");

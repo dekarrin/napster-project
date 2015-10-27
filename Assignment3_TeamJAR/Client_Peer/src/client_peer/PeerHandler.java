@@ -47,7 +47,7 @@ public class PeerHandler extends Thread {
 	    int endOfFile = fileInStream.read(byteArray);
 	    
 	    while (endOfFile != -1){
-		dOutStream.write(byteArray);
+		dOutStream.write(byteArray, 0, endOfFile);
 		dOutStream.flush();
 		endOfFile = fileInStream.read(byteArray);
 	    }
