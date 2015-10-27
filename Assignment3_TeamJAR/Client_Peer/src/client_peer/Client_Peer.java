@@ -157,7 +157,9 @@ public class Client_Peer {
 			}
 			
 			if(userInt != -1){
+			    System.out.println("attempting to spawn peerdownloader.");
 			    pd = new PeerDownloader(ipList[userInt],peerPort,folderPath,searchFile,downloadedFiles);
+			    pd.start();
 			}
 			
 		     }
