@@ -15,7 +15,7 @@ public class Client_Peer {
 	 }
 	 try{
 	     String serverIP = args[0];
-	     if (!serverIP.matches("(?\\d{1,3}\\.){3}\\d{1,3}")) {
+	     if (!serverIP.matches("(?:\\d{1,3}\\.){3}\\d{1,3}")) {
 		 InetAddress address = InetAddress.getByName(serverIP);
 		 serverIP = address.getHostAddress();
 	     }
