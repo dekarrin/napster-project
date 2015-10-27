@@ -20,6 +20,7 @@ public class PeerHandler extends Thread {
     }
     
     public void run(){
+	System.out.println("Started upload");
 	try {
 	    //input stream
 	    //output stream

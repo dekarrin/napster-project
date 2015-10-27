@@ -5,7 +5,7 @@
  */
 package server;
 
-import java.net.Socket;
+import java.net.*;
 import java.io.*;
 import java.util.*;
 
@@ -88,6 +88,9 @@ public class ClientHandler implements Runnable {
 	    if (clients != null && clients.size() > 0) {
 		StringBuilder builder = new StringBuilder();
 		for (String c : clients) {
+		    if (c.equals("127.0.0.1")) {
+			c = InetAddress.getLocalHost().getHostAddress();
+		    }
 		    builder.append(c);
 		    builder.append(",");
 		}

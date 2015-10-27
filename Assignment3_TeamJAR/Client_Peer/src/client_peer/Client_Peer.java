@@ -128,6 +128,11 @@ public class Client_Peer {
 			 System.out.println("These are not the droids you are looking for.");
 		     }else{
 			String[] ipList = ips.split(",");
+			for (int i = 0; i < ipList.length; i++) {
+			    if (ipList[i].startsWith("127.")) {
+				ipList[i] = serverIP;
+			    }
+			}
 			this.checkConnection();
 			System.out.println("Select the number of the IP you wish to download from.");
 			for(int i = 0; i<ipList.length; i++){

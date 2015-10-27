@@ -41,6 +41,7 @@ public class PeerDownloader extends Thread {
     
     @Override
     public void run() {
+	System.out.println("Download Started");
 	downloadedFiles.put(filename, false);
 	createSocket();
 	BufferedWriter output = createSocketWriter();
