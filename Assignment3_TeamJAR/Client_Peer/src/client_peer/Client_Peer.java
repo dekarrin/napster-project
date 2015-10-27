@@ -15,6 +15,10 @@ public class Client_Peer {
 	 }
 	 try{
 	     String serverIP = args[0];
+	     if (!serverIP.matches("(?\\d{1,3}\\.){3}\\d{1,3}")) {
+		 InetAddress address = InetAddress.getByName(serverIP);
+		 serverIP = address.getHostAddress();
+	     }
 	     int serverPort = Integer.parseInt(args[1]);
 	     String filePath = args[2];
 	     Client_Peer clpr = new Client_Peer(serverIP, serverPort, filePath);
