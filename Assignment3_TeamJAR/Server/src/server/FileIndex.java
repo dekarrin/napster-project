@@ -63,7 +63,7 @@ public class FileIndex {
     public synchronized void removeClient(String client) {
         if (clients.containsKey(client)) {
             Set<String> clientFiles = clients.get(client);
-            Set<String> delFiles = new HashSet<>();
+            Set<String> delFiles = new HashSet<String>();
             for (String f : clientFiles) {
                 Set<String> fSet = files.get(f);
                 fSet.remove(client);
